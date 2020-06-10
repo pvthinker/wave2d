@@ -1,0 +1,167 @@
+{
+    "domain": {
+        "Lx": {
+            "type": "float",
+            "doc": "domain length in x",
+            "default": 1.0
+        },
+        "Ly": {
+            "type": "float",
+            "doc": "domain length in y",
+            "default": 1.0
+        },
+        "nx": {
+            "type": "int",
+            "doc": "number of grid points in x",
+            "default": 128
+        },
+        "ny": {
+            "type": "int",
+            "doc": "number of grid points in y",
+            "default": 128
+        }
+    },
+   "time": {
+        "tend": {
+            "type": "float",
+            "doc": "integration time",
+            "default": 2.0
+        },
+        "tplot": {
+            "type": "float",
+            "doc": "time intervale between two consecutive frames. The bottleneck of the code is ... the plotting, not the computation!",
+            "default": 0.1
+        },
+        "dt": {
+            "type": "float",
+            "doc": "time step used in the computation. Should be smaller than tplot. Can be anything for initial value problem. Should be small enough for the wake and oscillator cases because of the source terms in the complex amplitude equation",
+            "default": 0.01 
+        }
+    },
+    "physics": {
+        "typewave": {
+            "type": "str",
+            "doc": "dispersion relation",
+            "avail": ["gw", "gwshort", "gwlong", "internal", "rossby", "inertiagravity", "capillary"],
+            "default": "gwshort"
+        },
+        "g": {
+            "type": "float",
+            "doc": "acceleration of gravity",
+            "default": 9.81
+        },
+        "H": {
+            "type": "float",
+            "doc": "water depth",
+            "default": 10.0
+        },
+        "beta": {
+            "type": "float",
+            "doc": "beta coefficient for Rossby waves",
+            "default": 1.0
+        },
+        "Rd": {
+            "type": "float",
+            "doc": "Rossby deformation radius",
+            "default": 1.0
+        },
+        "f0": {
+            "type": "float",
+            "doc": "Coriolis parameter",
+            "default": 1.0
+        },
+        "ageos": {
+            "type": "bool",
+            "doc": "determines whether (u,v) is the geostrophic or the ageostrophic velocity (Rossby wave case)",
+            "default": true
+        },
+        "BVF": {
+            "type": "float",
+            "doc": "Brunt-Vaisala frequency",
+            "default": 1e-1
+        },
+        "gammarho": {
+            "type": "float",
+            "doc": "gamma/rho with gamma=surface tension and rho=water density",
+            "default": 1.0
+        }
+    },
+    "plotting": {
+        "cax": {
+            "type": "float",
+            "doc": "colorbar interval: two values list, e.g. [-1., 1.]",
+            "default": [-0.1, 0.1]
+        },
+        "varplot": {
+            "type": "str",
+            "doc": "variable to plot during the animation",
+            "default": "p",
+            "avail": ["p", "u", "v", "up", "vp"]
+        },
+        "plotvector": {
+            "type": "str",
+            "doc": "vector field to superimpose during the animation",
+            "default": "None",
+            "avail": ["None", "velocity", "energyflux"]
+        },
+        "vectorscale": {
+            "type": "float",
+            "doc": "scale coefficient to make arrows longer (scale>1) or shorter (scale<1)",
+            "default": 1.0
+        },
+        "figwidth": {
+            "type": "int",
+            "doc": "figure width (in pixels)",
+            "default": 1080
+        }
+    },
+    "forcing": {
+        "generation": {
+            "type": "str",
+            "doc": "forcing that generates the wave pattern",
+            "avail": ["wake", "initial", "oscillator"],
+            "default": "wake"
+        },
+        "sigma": {
+            "type": "float",
+            "doc": "wavepacket/object width",
+            "default": 0.08
+        },
+        "U": {
+            "type": "float",
+            "doc": "object speed for the wake problem",
+            "default": 1.0
+        },
+        "alphaU": {
+            "type": "float",
+            "doc": "heading (in degrees) of the moving object (wake problem)",
+            "default": 0.0
+        },
+        "omega0": {
+            "type": "float",
+            "doc": "pulsation of the oscillator (oscillator problem)",
+            "default": 10.0
+        },
+        "waveform": {
+            "type": "string",
+            "doc": "wave packet form",
+            "default": "gaussian",
+            "avail": ["gaussian", "square", "triangle"]
+        },
+        "aspect_ratio": {
+            "type": "float",
+            "doc": "aspect ratio of the wavepacket (>1: elongated in x, <1, elongated in y)",
+            "default": 1.0
+        },
+        "x0": {
+            "type": "float",
+            "doc": "x coordinate of the wavepacket (origin is at bottom left corner of the domain)",
+            "default": 0.5
+        },
+        "y0": {
+            "type": "float",
+            "doc": "y coordinate of the wavepacket (origin is at bottom left corner of the domain)",
+            "default": 0.5
+        }
+    }   
+}

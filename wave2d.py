@@ -1,0 +1,114 @@
+from __future__ import print_function
+import numpy as np
+
+import plotting
+import fourier
+import wavepackets as wp
+
+import matplotlib.pyplot as plt
+plt.ion()
+
+
+class Wave2d(object):
+    def __init__(self, param):
+        param.checkall()
+        self.set_fourier_space(param)
+        self.set_wave_packet(param)
+
+    def set_fourier_space(self, param):
+        fspace = fourier.Fourier(param)
+        self.fspace = fspace
+
+    def set_wave_packet(self, param):
+        alphaU = param.alphaU
+        sigma = param.sigma
+        aspect_ratio = param.aspect_ratio
+        x0, y0 = param.x0, param.y0
+        xx, yy = self.fspace.xx, self.fspace.yy
+        z = (xx-x0) + 1j*(yy-y0)
+        z = z*np.exp(-1j*alphaU)
+
+        if param.waveform == 'gaussian':
+            d2 = np.real(z)**2 + (aspect_ratio*np.imag(z))**2
+            phi0 = np.exp(-d2/(2*sigma**2))
+
+        elif param.waveform == 'triangle':
+            phi0 = wp.triangle(np.real(z), aspect_ratio *
+                               np.imag(z), param.sigma)
+
+        elif param.waveform == 'square':
+            phi0 = wp.square(np.real(z), aspect_ratio*np.imag(z), param.sigma)
+
+        self.phi0 = 1e-2*phi0/np.mean(phi0.ravel())
+        self.hphi0 = np.fft.fft2(self.phi0)
+        self.boat = 1e-2*self.hphi0
+
+    def run(self, param, anim=True):
+
+        if param.generation in ['wake', 'oscillator']:
+            hphi = self.hphi0.copy()*0
+
+        else:
+            hphi = self.hphi0.copy()
+
+        if anim:
+            self.plot = plotting.Plotting(param)
+            var = self.fspace.compute_all_variables(hphi)
+            if param.plotvector == 'velocity':
+                self.plot.init_figure(self.phi0, u=var['u'], v=var['v'])
+
+            elif param.plotvector == 'energyflux':
+                self.plot.init_figure(self.phi0, u=var['up'], v=var['vp'])
+
+            else:
+                self.plot.init_figure(self.phi0)
+
+        tend = param.tend
+        dt = param.dt
+        nt = int(tend/dt)
+        kxx, kyy = self.fspace.kxx, self.fspace.kyy
+        omega = self.fspace.omega
+        propagator = np.exp(-1j*omega*dt)
+
+        time = 0.
+        kplot = np.ceil(param.tplot/dt)
+        xb, yb = param.x0+param.Lx/2, param.y0+param.Ly/2
+        xb, yb = 0, 0 #param.x0, param.y0
+        energy = np.zeros((nt,))
+        for kt in range(nt):
+            energy[kt] = 0.5*np.mean(np.abs(hphi.ravel())**2)
+            hphi = hphi*propagator
+
+            if param.generation == 'wake':
+                if kt == 0:
+                    kalpha = np.cos(param.alphaU)*kxx+np.sin(param.alphaU)*kyy
+                hphi += (1j*1e2*dt*self.boat*param.U*kalpha) * \
+                    np.exp(-1j*(kxx*xb+kyy*yb))
+                xb += dt*param.U*np.cos(param.alphaU)
+                yb += dt*param.U*np.sin(param.alphaU)
+
+            elif param.generation == 'oscillator':
+                hphi += (1e2*dt*self.boat)*np.exp(-1j*time*param.omega0)
+
+            kt += 1
+            time += dt
+
+            if anim:
+                if (kt % kplot == 0):
+                    var = self.fspace.compute_all_variables(hphi)
+                    z2d = var[param.varplot]
+                    self.var = var
+                    if param.plotvector == 'velocity':
+                        self.plot.update(kt, time, z2d, u=var['u'], v=var['v'])
+                    elif param.plotvector == 'energyflux':
+                        self.plot.update(
+                            kt, time, z2d, u=var['up'], v=var['vp'])
+                    else:
+                        self.plot.update(kt, time, z2d)
+
+            else:
+                print('\rkt=%i / %i' % (kt, nt), end='')
+
+        var = self.fspace.compute_all_variables(hphi)
+        self.energy = energy
+        self.var = var
