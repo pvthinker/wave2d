@@ -115,6 +115,18 @@
             "default": 1080
         }
     },
+    "IO": {
+        "netcdf": {
+            "type": "bool",
+            "doc": "if True, save the results into a netcdf file",
+            "default": true
+        },
+        "filename": {
+            "type": "str",
+            "doc": "file name of the netCDF",
+            "default": "history.nc"
+        }
+    },
     "forcing": {
         "generation": {
             "type": "str",

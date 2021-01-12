@@ -4,6 +4,8 @@ import numpy as np
 import plotting
 import fourier
 import wavepackets as wp
+import nc_tools as nct
+from netCDF4 import Dataset
 
 import matplotlib.pyplot as plt
 plt.ion()
@@ -75,6 +77,25 @@ class Wave2d(object):
         xb, yb = param.x0+param.Lx/2, param.y0+param.Ly/2
         xb, yb = 0, 0 #param.x0, param.y0
         energy = np.zeros((nt,))
+        if param.netcdf:
+            attrs = {"model": "wave2d",
+                     "wave": param.typewave}
+
+            sizes = {"y": param.ny, "x": param.nx}
+
+            variables = [{"short": "time",
+                          "long": "time",
+                          "units": "s",
+                          "dims": ("time")},
+                         {"short": "p",
+                          "long": "pressure anomaly",
+                          "units": "m s^-1",
+                          "dims": ("time", "y", "x")}]
+            
+            fid = nct.NcTools(variables, sizes, attrs, ncfilename=param.filename)
+            fid.createhisfile()
+            ktio = 0
+
         for kt in range(nt):
             energy[kt] = 0.5*np.mean(np.abs(hphi.ravel())**2)
             hphi = hphi*propagator
@@ -106,6 +127,11 @@ class Wave2d(object):
                     else:
                         self.plot.update(kt, time, z2d)
 
+                    if param.netcdf:
+                        with Dataset(param.filename, "r+") as nc:
+                            nc.variables["time"][ktio] = time
+                            nc.variables["p"][ktio, : , :] = z2d
+                            ktio += 1
             else:
                 print('\rkt=%i / %i' % (kt, nt), end='')
 

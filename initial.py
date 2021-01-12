@@ -19,8 +19,8 @@ param.aspect_ratio = 1.
 
 param.varplot = 'p'
 
-param.nx, param.ny = 128*4, 128*4
-param.Lx, param.Ly = 3, 2
+param.nx, param.ny = 128*2, 128
+param.Lx, param.Ly = 4, 2
 param.x0, param.y0 = 1., 1.0
 
 param.g = 1.
@@ -32,11 +32,13 @@ cg = 1.0
 param.beta = cg/param.Rd**2
 param.BVF = 20.
 
-param.tend = 1.5
-param.tplot = .01
-param.plotvector = 'velocity'
+param.tend = 1.
+param.tplot = .02
+param.plotvector = 'None'
 param.vectorscale = 10. # larger 'vectorscale' makes the arrows shorter
 param.dt = 1e-2
+
+param.netcdf = False # set it to True to save the NetCDF file
 
 param.U = .6
 param.alphaU = 0*np.pi/180.
