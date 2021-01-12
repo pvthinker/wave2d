@@ -9,7 +9,7 @@ plt.ion()
 # use param.manall() in your IPython console or in your Jupyter notebook
 
 param = namelist.Namelist()
-param.typewave = 'gwlong'  # 'gwshort', 'inertiagravity', 'internal', 'rossby'
+param.typewave = 'gwshort'  # 'gwshort', 'inertiagravity', 'internal', 'rossby'
 param.generation = 'initial'
 param.omega0 = 5.
 param.waveform = 'gaussian'
@@ -32,13 +32,13 @@ cg = 1.0
 param.beta = cg/param.Rd**2
 param.BVF = 20.
 
-param.tend = 1.
+param.tend = 2.
 param.tplot = .02
 param.plotvector = 'None'
 param.vectorscale = 10. # larger 'vectorscale' makes the arrows shorter
 param.dt = 1e-2
 
-param.netcdf = False # set it to True to save the NetCDF file
+param.netcdf = True # set it to True to save the NetCDF file
 
 param.U = .6
 param.alphaU = 0*np.pi/180.
