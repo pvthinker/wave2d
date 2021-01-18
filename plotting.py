@@ -16,7 +16,7 @@ plt.ion()
 class Plotting(object):
     def __init__(self, param):
         list_param = ['Lx', 'Ly', 'cax', 'figwidth',
-                      'varplot', 'typewave', 'vectorscale']
+                      'varplot', 'typewave', 'vectorscale', 'macuser']
         param.copy(self, list_param)
         self.d = 8 # how many points are skept for quiver plot
 
@@ -80,9 +80,10 @@ class Plotting(object):
 
         self.fig.tight_layout()
         self.fig.show()
-        self.fig.canvas.draw()
-        # for macOS comment above and decomment below
-        #plt.pause(1e-4)
+        if self.macuser:
+            plt.pause(1e-4)
+        else:
+            self.fig.canvas.draw()
 
     def update(self, kt, time, field2d, u=None, v=None):
         """ update the figure during the loop

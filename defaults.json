@@ -87,6 +87,11 @@
         }
     },
     "plotting": {
+        "macuser": {
+            "type": "bool",
+            "doc": "set it to True if you are using a mac. Make the animation working.",
+            "default": false
+        },
         "cax": {
             "type": "float",
             "doc": "colorbar interval: two values list, e.g. [-1., 1.]",
