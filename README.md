@@ -1,4 +1,4 @@
-#Wave2d
+# Wave2d
 
 Wave2d is a very simple Python code to investigate a few properties of
 linear waves encountered in fluids: surface waves, internal gravity
