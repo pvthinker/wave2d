@@ -89,8 +89,25 @@ class Wave2d(object):
                           "dims": ("time")},
                          {"short": "p",
                           "long": "pressure anomaly",
+                          "units": "m^2 s^-2",
+                          "dims": ("time", "y", "x")},
+                         {"short": "u",
+                          "long": "velocity x-component",
                           "units": "m s^-1",
-                          "dims": ("time", "y", "x")}]
+                          "dims": ("time", "y", "x")},
+                         {"short": "v",
+                          "long": "velocity y-component (or z-)",
+                          "units": "m s^-1",
+                          "dims": ("time", "y", "x")},
+                         {"short": "up",
+                          "long": "up flux x-component",
+                          "units": "m^3 s^-3",
+                          "dims": ("time", "y", "x")},
+                         {"short": "vp",
+                          "long": "vp flux y-component",
+                          "units": "m^3 s^-3",
+                          "dims": ("time", "y", "x")}
+                         ]
             
             fid = nct.NcTools(variables, sizes, attrs, ncfilename=param.filename)
             fid.createhisfile()
@@ -131,6 +148,9 @@ class Wave2d(object):
                         with Dataset(param.filename, "r+") as nc:
                             nc.variables["time"][ktio] = time
                             nc.variables["p"][ktio, : , :] = z2d
+                            for v in ["u", "v", "up", "vp"]:
+                                nc.variables[v][ktio, : , :] = var[v]
+
                             ktio += 1
             else:
                 print('\rkt=%i / %i' % (kt, nt), end='')
