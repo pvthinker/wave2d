@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib
@@ -9,7 +10,6 @@ matplotlib.rc('font', **font)
 
 
 # the backend 'TkAgg' has to be set before pyplot is imported
-import matplotlib.pyplot as plt
 plt.ion()
 
 
@@ -18,7 +18,7 @@ class Plotting(object):
         list_param = ['Lx', 'Ly', 'cax', 'figwidth',
                       'varplot', 'typewave', 'vectorscale', 'macuser']
         param.copy(self, list_param)
-        self.d = 8 # how many points are skept for quiver plot
+        self.d = 8  # how many points are skept for quiver plot
 
     def init_figure(self, field2d, u=None, v=None):
         """create the figure
@@ -99,10 +99,11 @@ class Plotting(object):
             maxu = max(np.max(np.abs(u.ravel())), np.max(np.abs(v.ravel())))
             maxu = max(np.std(u.ravel()), np.std(v.ravel()))
             self.quiv.scale = maxu*10*self.vectorscale
-            
-        self.fig.canvas.draw()
-        # for macOS comment above and decomment below
-        # plt.pause(1e-4)
+
+        if self.macuser:
+            plt.pause(1e-4)
+        else:
+            self.fig.canvas.draw()
 
 
 def plotvar(param, field2d, varname, cax=None):

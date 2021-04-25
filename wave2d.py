@@ -21,8 +21,11 @@ class Wave2d(object):
         fspace = fourier.Fourier(param)
         self.fspace = fspace
 
-    def set_wave_packet(self, param):
-        alphaU = param.alphaU
+    def set_wave_packet(self, param, heading=None):
+        if heading is None:
+            alphaU = param.alphaU
+        else:
+            alphaU = heading
         sigma = param.sigma
         aspect_ratio = param.aspect_ratio
         x0, y0 = param.x0, param.y0
@@ -41,9 +44,9 @@ class Wave2d(object):
         elif param.waveform == 'square':
             phi0 = wp.square(np.real(z), aspect_ratio*np.imag(z), param.sigma)
 
-        self.phi0 = 1e-2*phi0/np.mean(phi0.ravel())
+        self.phi0 = phi0
         self.hphi0 = np.fft.fft2(self.phi0)
-        self.boat = 1e-2*self.hphi0
+        self.boat = self.hphi0
 
     def run(self, param, anim=True):
 
@@ -72,10 +75,15 @@ class Wave2d(object):
         omega = self.fspace.omega
         propagator = np.exp(-1j*omega*dt)
 
+        sigma = param.sigma
+        aspect_ratio = param.aspect_ratio
+        x0, y0 = param.x0, param.y0
+        xx, yy = self.fspace.xx, self.fspace.yy
+
         time = 0.
         kplot = np.ceil(param.tplot/dt)
         xb, yb = param.x0+param.Lx/2, param.y0+param.Ly/2
-        xb, yb = 0, 0 #param.x0, param.y0
+        xb, yb = 0, 0  # param.x0, param.y0
         energy = np.zeros((nt,))
         if param.netcdf:
             attrs = {"model": "wave2d",
@@ -108,8 +116,9 @@ class Wave2d(object):
                           "units": "m^3 s^-3",
                           "dims": ("time", "y", "x")}
                          ]
-            
-            fid = nct.NcTools(variables, sizes, attrs, ncfilename=param.filename)
+
+            fid = nct.NcTools(variables, sizes, attrs,
+                              ncfilename=param.filename)
             fid.createhisfile()
             ktio = 0
 
@@ -118,12 +127,29 @@ class Wave2d(object):
             hphi = hphi*propagator
 
             if param.generation == 'wake':
-                if kt == 0:
-                    kalpha = np.cos(param.alphaU)*kxx+np.sin(param.alphaU)*kyy
-                hphi += (1j*1e2*dt*self.boat*param.U*kalpha) * \
-                    np.exp(-1j*(kxx*xb+kyy*yb))
-                xb += dt*param.U*np.cos(param.alphaU)
-                yb += dt*param.U*np.sin(param.alphaU)
+
+                if hasattr(self, "traj"):
+
+                    xb, yb = self.traj.get_position(time)
+                    vx, vy = self.traj.get_velocity(time)
+
+                    kalpha = vx*kxx+vy*kyy
+                    # recompute self.boat (complex Fourier amplitude)
+                    # to account for the new heading
+                    heading = np.angle(vx+1j*vy)
+                    self.set_wave_packet(param, heading)
+                    # shift the source at the boat location (xb,yb)
+                    shift = np.exp(-1j*(kxx*xb+kyy*yb))
+                    # add the source term to hphi
+                    hphi -= 1j*dt*self.boat*kalpha*shift
+                else:
+                    if kt == 0:
+                        kalpha = np.cos(param.alphaU)*kxx + \
+                            np.sin(param.alphaU)*ky
+                    hphi += (1j*1e2*dt*self.boat*param.U*kalpha) * \
+                        np.exp(-1j*(kxx*xb+kyy*yb))
+                    xb += dt*param.U*np.cos(param.alphaU)
+                    yb += dt*param.U*np.sin(param.alphaU)
 
             elif param.generation == 'oscillator':
                 hphi += (1e2*dt*self.boat)*np.exp(-1j*time*param.omega0)
@@ -147,9 +173,9 @@ class Wave2d(object):
                     if param.netcdf:
                         with Dataset(param.filename, "r+") as nc:
                             nc.variables["time"][ktio] = time
-                            nc.variables["p"][ktio, : , :] = z2d
+                            nc.variables["p"][ktio, :, :] = z2d
                             for v in ["u", "v", "up", "vp"]:
-                                nc.variables[v][ktio, : , :] = var[v]
+                                nc.variables[v][ktio, :, :] = var[v]
 
                             ktio += 1
             else:
