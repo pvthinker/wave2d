@@ -3,7 +3,7 @@
 Wave2d is a very simple Python code to investigate a few properties of
 linear waves encountered in fluids: surface waves, internal gravity
 waves and Rossby waves.  The code illustrates their dispersive effects
-through the evolution of the wave field. The code offers tree
+through the evolution of the wave field. The code offers three
 different ways to generate waves: a localized initial
 perturbation, a moving object, generating a wake, and an oscillating
 wavemaker. The code also illustrates two aspects of the wave energy:
