@@ -145,7 +145,7 @@ class Wave2d(object):
                 else:
                     if kt == 0:
                         kalpha = np.cos(param.alphaU)*kxx + \
-                            np.sin(param.alphaU)*ky
+                            np.sin(param.alphaU)*kyy
                     hphi += (1j*1e2*dt*self.boat*param.U*kalpha) * \
                         np.exp(-1j*(kxx*xb+kyy*yb))
                     xb += dt*param.U*np.cos(param.alphaU)
