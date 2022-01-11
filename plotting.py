@@ -5,7 +5,7 @@ import matplotlib
 import fourier
 font = {'size': 16}
 
-matplotlib.use('TkAgg')
+# matplotlib.use('TkAgg')
 matplotlib.rc('font', **font)
 
 
