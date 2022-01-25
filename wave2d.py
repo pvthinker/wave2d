@@ -44,8 +44,29 @@ class Wave2d(object):
         elif param.waveform == 'square':
             phi0 = wp.square(np.real(z), aspect_ratio*np.imag(z), param.sigma)
 
+        elif param.waveform == 'packet':
+            kxx = self.fspace.kxx
+            kyy = self.fspace.kyy
+
+            Lx = param.Lx
+            k0x = self.fspace.kx[60]
+            k0y = self.fspace.kx[30]
+            sigma = 10.
+
+            d2 = ((kxx-k0x)*k0x+(kyy-k0y)*k0y)**2
+            d2 += 20*((kxx-k0x)*k0y-(kyy-k0y)*k0x)**2
+            d2 /= (k0x**2+k0y**2)
+
+            hphi = np.exp(-d2/(2*sigma**2)) * np.exp(1j*(kxx*x0+kyy*y0))
+
+            hphi *= np.sqrt(param.nx*param.ny)
+            self.hphi0 = hphi
+
+            phi0 = np.real(np.fft.ifft2(hphi))
+
         self.phi0 = phi0
-        self.hphi0 = np.fft.fft2(self.phi0)
+        if param.waveform != 'packet':
+            self.hphi0 = np.fft.fft2(self.phi0)
         self.boat = self.hphi0
 
     def run(self, param, anim=True):

@@ -163,7 +163,7 @@
             "type": "string",
             "doc": "wave packet form",
             "default": "gaussian",
-            "avail": ["gaussian", "square", "triangle"]
+            "avail": ["gaussian", "square", "triangle", "packet"]
         },
         "aspect_ratio": {
             "type": "float",
