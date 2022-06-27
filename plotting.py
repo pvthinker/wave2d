@@ -84,6 +84,7 @@ class Plotting(object):
             plt.pause(1e-4)
         else:
             self.fig.canvas.draw()
+            plt.pause(1e-4)
 
     def update(self, kt, time, field2d, u=None, v=None):
         """ update the figure during the loop
@@ -104,6 +105,7 @@ class Plotting(object):
             plt.pause(1e-4)
         else:
             self.fig.canvas.draw()
+            plt.pause(1e-4)
 
 
 def plotvar(param, field2d, varname, cax=None):

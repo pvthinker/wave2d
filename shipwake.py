@@ -28,7 +28,7 @@ param.vectorscale = 10. # larger 'vectorscale' makes the arrows shorter
 
 param.aspect_ratio = 4.  # for the ship, between x and y lengths
 param.U = 0.3
-param.x0 = 1.5
+param.x0 = 0.5
 
 model = wave2d.Wave2d(param)
 model.run(param, anim=True)
