@@ -2,8 +2,8 @@ import numpy as np
 import namelist
 import wave2d
 
-#import matplotlib.pyplot as plt
-#plt.ion()
+import matplotlib.pyplot as plt
+plt.ion()
 
 # to get the list of all parameters and their available values
 # use param.manall() in your IPython console or in your Jupyter notebook

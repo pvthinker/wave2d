@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 plt.ion()
 
 param = namelist.Namelist()
-param.typewave = 'gwlong'
+param.typewave = 'gwshort'
 
 
 param.nx, param.ny = 128*8, 128*4
@@ -21,11 +21,14 @@ param.dt = 1e-2
 
 param.alphaU = 0*np.pi/180.
 
-param.cax = np.asarray([-1., 1.])*5
+param.cax = np.asarray([-1., 1.])*20
 param.figwidth = 1080
+param.plotvector = 'None'#'energyflux'
+param.vectorscale = 10. # larger 'vectorscale' makes the arrows shorter
 
 param.aspect_ratio = 4.  # for the ship, between x and y lengths
 param.U = 0.3
+param.x0 = 1.5
 
 model = wave2d.Wave2d(param)
 model.run(param, anim=True)
