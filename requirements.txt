@@ -1,0 +1,6 @@
+python =>3.10,<3.12
+netCDF4
+matplotlib
+numpy
+scipy
+ipython
