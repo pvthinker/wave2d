@@ -65,11 +65,13 @@ class Fourier(object):
 
         if self.typewave == 'rossby':
             self.omega = -self.beta*self.kxx/(self.ktot**2+self.Rd**-2)
-            self.p2u = +1j*self.kyy/self.f0
-            self.p2v = -1j*self.kxx/self.f0
+            self.p2u = -1j*self.kyy/self.f0
+            self.p2v = 1j*self.kxx/self.f0
             if self.ageos:
-                pp2u = -1j*self.p2v*self.omega/self.f0
-                self.p2v = +1j*self.p2u*self.omega/self.f0
+                # pp2u =    -(-1j*self.omega*self.p2v)/self.f0
+                # self.p2v = (-1j*self.omega*self.p2u-self.beta*self.p2v)/self.f0
+                pp2u =    -(-1j*self.omega*self.p2v)/self.f0
+                self.p2v = (-1j*self.omega*self.p2u)/self.f0
                 self.p2u = pp2u
 
     def compute_all_variables(self, hphi):
